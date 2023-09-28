@@ -235,11 +235,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2.54
-  Health: 100
+  health: 20
   maxHealth: 20
   HealthBar: {fileID: 6246036253453244592}
   damage: 2
   hitSpeed: 0.5
+  isNeedMove: 0
   target: {fileID: 0}
   dropList:
   - {fileID: 4954178246074735322, guid: 3481f1555f8668741bdb87392797bcaf, type: 3}

@@ -12,6 +12,7 @@ TagManager:
   - AK-47
   - PuckOfBullet Drop
   - PlayerTriger
+  - PlayerGun
   layers:
   - Default
   - TransparentFX

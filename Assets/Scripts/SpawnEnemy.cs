@@ -1,32 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class SpawnEnemy : MonoBehaviour
 {
 
 	[SerializeField] private GameObject enemyPrefab;
-	float RandX;
-	float RandY;
-	Vector2 whereToSpawn;
+	private static GameObject _enemyPrefab;
+	static float RandX;
+	static float RandY;
 
 	[SerializeField] private int spawnCount = 0;
-	[SerializeField] private Transform playerTransform;
+
+	[SerializeField] private static Transform playerTransform;
+
+
 	// Start is called before the first frame update
-	void Start()
+	public void Initialize()
 	{
-		for (int i = 0; i < spawnCount; i++)
-		{
-			SpawnEnemyInRandPosition();
-		}
+		if(spawnCount > SaveLoadSystem.getCountEnemyList())
+			{
+				for (int i = 0; i < spawnCount - SaveLoadSystem.getCountEnemyList(); i++)
+				{
+					playerTransform = GameObject.FindAnyObjectByType<PlayerController>().transform;
+					_enemyPrefab = enemyPrefab;
+					SpawnEnemyInRandPosition();
+				}
+			}
 	}
 
-	void SpawnEnemyInRandPosition()
+	static GameObject SpawnEnemyInRandPosition()
 	{
 		RandX = Random.Range(-40f, -11f);
 		RandY = Random.Range(6f, -7f);
-		whereToSpawn = new Vector2(RandX, RandY);
+
+		Vector2 whereToSpawn = new Vector2(RandX, RandY);
+
 		while(Vector3.Distance(whereToSpawn, playerTransform.position) < 7)
 		{
 			RandX = Random.Range(-40f, -11f);
@@ -34,6 +41,14 @@ public class SpawnEnemy : MonoBehaviour
 			whereToSpawn = new Vector2(RandX, RandY);
 		}
 
-		Instantiate(enemyPrefab, whereToSpawn, Quaternion.identity);
+		return Instantiate(_enemyPrefab, whereToSpawn, Quaternion.identity);
+
+	}
+
+	public GameObject SpawnNewEnemy(PlayerController player, GameObject enemy)
+	{
+		playerTransform = player.transform;
+		_enemyPrefab = enemy;
+		return SpawnEnemyInRandPosition();
 	}
 }

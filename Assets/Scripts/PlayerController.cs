@@ -1,23 +1,14 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 
 public class PlayerController : BaseEnemy
 {
-
-	float dirX, dirY;
 	public Joystick joystick;
-	private Vector2 playerMovement;
+	private Vector2 playerMovement = Vector2.zero;
 
-	public void Initialize()
-	{
-		GetComponent<CapsuleCollider2D>().isTrigger = true;
-	}
 
 	private void FixedUpdate()
 	{
-		playerMovement = Vector2.zero;
 		playerMovement.x = joystick.Horizontal * speed;
 		playerMovement.y = joystick.Vertical * speed;
 		
@@ -26,10 +17,15 @@ public class PlayerController : BaseEnemy
 
 	public override void Move(Vector3 pos)
 	{
-
 		GetComponent<Rigidbody2D>().velocity = playerMovement;
-
 	}
 
+	private void OnDestroy()
+	{
+		if (isGamePlay)
+		{
+			SaveLoadSystem.RemoveEnemyDataByID(GetInstanceID().ToString());
+		}
+	}
 }
 

@@ -237,7 +237,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bullet: {fileID: 3760508843436532517, guid: 01f184b28bdf49e4086631a5a71a8c22, type: 3}
   shootElement: {fileID: 1039342305811299279}
-  shootSpeed: 0.5
+  shootSpeed: 0.25
 --- !u!1 &1216542361323834651
 GameObject:
   m_ObjectHideFlags: 0
@@ -432,7 +432,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1559733541
   m_SortingLayer: 1
-  m_SortingOrder: 1
+  m_SortingOrder: 21
   m_Sprite: {fileID: 21300000, guid: be4bb9be56bd25441b22959b583ebacb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -815,7 +815,7 @@ MonoBehaviour:
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0.02
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -1068,7 +1068,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8504515289277482312}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -27.39, y: -2.09, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -1093,9 +1093,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4
-  Health: 100
+  health: 100
   maxHealth: 100
   HealthBar: {fileID: 3324637830855258106}
+  isGamePlay: 1
+  joystick: {fileID: 0}
 --- !u!114 &1817648843770109427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1108,7 +1110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d509bae6a1bda6943a51ae41bdb392e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFill: 
+  isFill: 00000000
   Slots:
   - {fileID: 0}
   - {fileID: 0}

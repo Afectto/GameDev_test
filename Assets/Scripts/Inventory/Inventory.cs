@@ -29,7 +29,7 @@ public class Inventory : MonoBehaviour
 			Slots[i].transform.position = offsetX;
 			Slots[i].GetComponent<Slot>().setIndex(i);
 		}
-    }
+	}
 
 
 	public void Bug()
