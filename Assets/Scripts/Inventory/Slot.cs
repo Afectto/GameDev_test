@@ -73,4 +73,8 @@ public class Slot : MonoBehaviour
 	{
 		index = m_index;
 	}
+	public int getIndex()
+	{
+		return index;
+	}
 }

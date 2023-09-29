@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-	bool isShoot = false;
-
 	public GameObject bullet;
 	public Transform shootElement;
 
@@ -29,10 +27,6 @@ public class Gun : MonoBehaviour
 		{
 			CurrentTarget = PlayerTrigger.currentTarget.transform;
 			RotateGun();
-			if (!isShoot)
-			{
-				StartCoroutine(shoot());
-			}
 		}
 		else
 		{
@@ -61,15 +55,12 @@ public class Gun : MonoBehaviour
 		transform.localScale = LocalScale;
 	}
 
-	IEnumerator shoot()
+	public void shoot()
 	{
-		isShoot = true;
-		yield return new WaitForSeconds(shootSpeed);
 		if(CurrentTarget)
 		{
 			var m_bullet = GameObject.Instantiate(bullet, shootElement.position, Quaternion.identity) as GameObject;
 			m_bullet.GetComponent<BulletController>().target = CurrentTarget;
 		}
-		isShoot = false;
 	}
 }

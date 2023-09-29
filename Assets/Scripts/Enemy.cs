@@ -11,6 +11,7 @@ public class Enemy : BaseEnemy
 	public Transform target;
 
 	public GameObject[] dropList;
+	public bool isNeedDrop = true;
 
 
 	private void Awake()
@@ -38,9 +39,11 @@ public class Enemy : BaseEnemy
 	{
 		if (isGamePlay)
 		{
-			int itemIndex = Random.Range(0, dropList.Length);
-
-			Instantiate(dropList[itemIndex], transform.position, Quaternion.identity);
+			if(isNeedDrop)
+			{
+				int itemIndex = Random.Range(0, dropList.Length);
+				Instantiate(dropList[itemIndex], transform.position, Quaternion.identity);
+			}
 
 			SaveLoadSystem.RemoveEnemyDataByID(GetInstanceID().ToString());
 		}
@@ -49,6 +52,12 @@ public class Enemy : BaseEnemy
 	public void setTarget(Transform targ)
 	{
 		target = targ;
+	}
+
+	public void DestroyWhitDrop(bool isNeedDrop)
+	{
+		this.isNeedDrop = isNeedDrop;
+		Destroy(gameObject);
 	}
 
 }

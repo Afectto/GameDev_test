@@ -12,10 +12,17 @@ public class SaveLoadSystem : MonoBehaviour
 
 	private static List<IEnemy> EnemyList = new();
 
+	[SerializeField] private GameObject enemyPrefab;
 	private static GameObject staticEnemyPrefab;
-	[SerializeField] private  GameObject enemyPrefab;
 
 	private static SpawnEnemy spawn;
+
+	[SerializeField] private List<GameObject> pickupList;
+	private static List<GameObject> pickupStaticList;
+
+
+	[SerializeField] private List<GameObject> slotItemList;
+	private static List<GameObject> slotItemStaticList;
 
 	public static void UpdateEnemyData(IEnemy enemy)
 	{
@@ -36,12 +43,14 @@ public class SaveLoadSystem : MonoBehaviour
 
 		spawn = new SpawnEnemy();
 		staticEnemyPrefab = enemyPrefab;
-		LoadEnemy();
+		pickupStaticList = pickupList;
+		slotItemStaticList = slotItemList;
+		LoadGame();
 
 		return true;
 	}
 
-	public static void SaveEnemy()
+	public static void SaveGame()
 	{
 		BinaryFormatter formatter = new BinaryFormatter();
 		FileStream stream = new FileStream(filePath, FileMode.Create);
@@ -50,12 +59,14 @@ public class SaveLoadSystem : MonoBehaviour
 
 		SaveData data = new();
 		data.SaveEnemies(EnemyList);
+		data.SavePickup(GameObject.FindObjectsOfType<Pickup>().ToList<Pickup>());
+		data.SaveInventory(GameObject.FindObjectOfType<Inventory>());
 
 		formatter.Serialize(stream, data);
 		stream.Close();
 	}
 
-	public static void LoadEnemy()
+	public static void LoadGame()
 	{
 		if (!File.Exists(filePath))
 			return;
@@ -66,20 +77,34 @@ public class SaveLoadSystem : MonoBehaviour
 		SaveData data = formatter.Deserialize(stream) as SaveData;
 		stream.Close();
 
+		LoadEnemy(data.EnamiesData);
+		LoadPickup(data.PicksUpData);
+		LoadInventory(data.InventoriesData);
+	}
+
+
+	public static void LoadEnemy(List<EnemyData> data)
+	{
+
 		updateEnemyList();
 
-		var player = LoadPlayer(data.EnamiesData.Find(player => player.type == typeof(PlayerController).ToString()));
+		var player = LoadPlayer(data.Find(player => player.type == typeof(PlayerController).ToString()));
 
-		foreach (var enemy in data.EnamiesData)
+		foreach (var enemy in data)
 		{
+			var typeIEnemy = enemy.type;
 			var findEnemy = EnemyList.Find(e => e.InstanceID == enemy.instanceID);
  			if (findEnemy != null)
 			{
+				if (typeIEnemy == typeof(Enemy).ToString())
+				{
+					var myEnemy = findEnemy as Enemy;
+					myEnemy.target = null;
+				}
 				findEnemy.LoadEnemy(enemy);
 			}
 			else
 			{
-				var typeIEnemy = enemy.type;
 				if (typeIEnemy == typeof(Enemy).ToString())
 				{
 					EnemyList.Add(spawn.SpawnNewEnemy(player, staticEnemyPrefab).GetComponent<IEnemy>());
@@ -98,12 +123,6 @@ public class SaveLoadSystem : MonoBehaviour
 		{
 			EnemyList.Add(player);
 		}
-		else if(player == null)
-		{
-			SpawnPlayer spawnPlayer = GameObject.FindObjectOfType<SpawnPlayer>();
-			player = spawnPlayer.spawnPlayer();
-			EnemyList.Add(player);
-		}
 
 		if (loadedPlayer.maxHealth > 0)
 		{
@@ -116,20 +135,66 @@ public class SaveLoadSystem : MonoBehaviour
 	{
 		EnemyList = GameObject.FindObjectsOfType<BaseEnemy>().ToList<IEnemy>();
 	}
-
 	public static void RemoveEnemyDataByID(string ID)
 	{
 		EnemyList.Remove(EnemyList.Find(e => e.InstanceID == ID));
 	}
-
 	public static int getCountEnemyList()
 	{
 		return EnemyList.FindAll(e => e.Type == "Enemy").Count;
 	}
 
+	public static void LoadPickup(List<PickUpData> data)
+	{
+		foreach (var pickup in data)
+		{
+			Instantiate(pickupStaticList.Find(up => up.tag == pickup.Tag), new Vector3(pickup.Position.x, pickup.Position.y, pickup.Position.z), Quaternion.identity);
+		}
+	}
+
+	public static void LoadInventory(List<InventoryData> data)
+	{
+		var inventory = GameObject.FindObjectOfType<Inventory>();
+		foreach (var slot in data)
+		{
+			for (int i = 0; i < slot.count; i++)
+			{
+				Instantiate(slotItemStaticList.Find(prefab => prefab.tag == slot.Tag), inventory.Slots[slot.index].transform);
+			}
+		}
+	}
 
 	void OnApplicationQuit()
 	{
-		SaveEnemy();
+		SaveGame();
+	}
+
+
+	public void onLoad()
+	{
+		var allEnemy = GameObject.FindObjectsOfType<Enemy>().ToList<Enemy>();
+		foreach (var enemy in allEnemy)
+		{
+			enemy.DestroyWhitDrop(false);
+		}
+
+		var inventory = GameObject.FindObjectOfType<Inventory>();
+		foreach (var slots in inventory.Slots)
+		{
+			foreach (Transform child in slots.transform)
+			{
+				if (child.tag != "Text")
+				{
+					GameObject.Destroy(child.gameObject);
+				}
+			}
+
+		}
+
+		var allPickup =  GameObject.FindObjectsOfType<Pickup>().ToList<Pickup>();
+		foreach (var pickup in allPickup)
+		{
+			Destroy(pickup.gameObject);
+		}
 	}
 }
